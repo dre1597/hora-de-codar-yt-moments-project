@@ -1,15 +1,20 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Moment } from 'src/app/Moment';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+
+import { Moment } from '../../Moment';
 
 @Component({
   selector: 'app-moment-form',
   templateUrl: './moment-form.component.html',
-  styleUrls: ['./moment-form.component.css'],
 })
 export class MomentFormComponent implements OnInit {
   @Input() btnText!: string;
-  @Output() onSubmit = new EventEmitter<Moment>();
+  @Output() onSubmit: EventEmitter<Moment> = new EventEmitter<Moment>();
   @Input() momentData: Moment | null = null;
 
   momentForm!: FormGroup;
@@ -28,21 +33,21 @@ export class MomentFormComponent implements OnInit {
     });
   }
 
-  get title() {
+  get title(): AbstractControl {
     return this.momentForm.get('title')!;
   }
 
-  get description() {
+  get description(): AbstractControl {
     return this.momentForm.get('description')!;
   }
 
-  onFileSelected(event: any) {
+  onFileSelected(event: any): void {
     const file: File = event.target.files[0];
 
     this.momentForm.patchValue({ image: file });
   }
 
-  submit() {
+  submit(): void {
     if (this.momentForm.invalid) return;
 
     this.onSubmit.emit(this.momentForm.value);

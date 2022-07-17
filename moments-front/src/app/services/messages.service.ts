@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 export class MessagesService {
   message: string = '';
 
-  add(message: string) {
+  add(message: string): void {
     this.message = message;
 
     setTimeout(() => {
@@ -14,7 +14,7 @@ export class MessagesService {
     }, 4000);
   }
 
-  clear() {
+  clear(): void {
     this.message = '';
   }
 }

@@ -1,15 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
+
+import { environment } from '../../environments/environment';
 import { Moment } from '../Moment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MomentService {
-  private _baseApiUrl = environment.baseApiUrl;
-  private _momentsUrl = `${this._baseApiUrl}/moments`;
+  private _baseApiUrl: string = environment.baseApiUrl;
+  private _momentsUrl: string = `${this._baseApiUrl}/moments`;
 
   constructor(private http: HttpClient) {}
 
@@ -31,8 +32,8 @@ export class MomentService {
     return this.http.patch<FormData>(url, formData);
   }
 
-  removeMoment(id: number) {
+  removeMoment(id: number): Observable<void> {
     const url = `${this._momentsUrl}/${id}`;
-    return this.http.delete(url);
+    return this.http.delete<void>(url);
   }
 }

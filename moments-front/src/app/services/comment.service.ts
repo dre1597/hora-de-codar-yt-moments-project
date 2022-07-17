@@ -1,15 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
+
+import { environment } from '../../environments/environment';
 import { Comment } from '../Comment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CommentService {
-  private _baseApiUrl = environment.baseApiUrl;
-  private _commentsUrl = `${this._baseApiUrl}/comments`;
+  private _baseApiUrl: string = environment.baseApiUrl;
+  private _commentsUrl: string = `${this._baseApiUrl}/comments`;
 
   constructor(private http: HttpClient) {}
 

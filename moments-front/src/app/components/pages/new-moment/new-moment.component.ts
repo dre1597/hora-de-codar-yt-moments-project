@@ -1,9 +1,10 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { Moment } from 'src/app/Moment';
-import { MessagesService } from 'src/app/services/messages.service';
-import { MomentService } from 'src/app/services/moment.service';
+
+import { Moment } from '../../../Moment';
+import { MessagesService } from '../../../services/messages.service';
+import { MomentService } from '../../../services/moment.service';
 
 @Component({
   selector: 'app-new-moment',
@@ -11,7 +12,8 @@ import { MomentService } from 'src/app/services/moment.service';
   styleUrls: ['./new-moment.component.css'],
 })
 export class NewMomentComponent implements OnDestroy {
-  btnText = 'Share';
+  btnText: string = 'Share';
+
   private _subscriptions: Subscription[] = [];
 
   constructor(
@@ -24,7 +26,7 @@ export class NewMomentComponent implements OnDestroy {
     this._subscriptions.forEach((subscription) => subscription.unsubscribe());
   }
 
-  async createHandler(moment: Moment) {
+  createHandler(moment: Moment): void {
     const formData = new FormData();
 
     formData.append('title', moment.title);
@@ -34,11 +36,11 @@ export class NewMomentComponent implements OnDestroy {
       formData.append('image', moment.image);
     }
 
-    const createMomentObservable = this.momentService
+    const createMomentSubscription = this.momentService
       .createMoment(formData)
       .subscribe();
 
-    this._subscriptions.push(createMomentObservable);
+    this._subscriptions.push(createMomentSubscription);
 
     this.messagesService.add('Moment was added successfully!');
 

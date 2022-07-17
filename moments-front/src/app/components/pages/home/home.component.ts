@@ -1,9 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from 'rxjs';
-import { Moment } from 'src/app/Moment';
-import { MomentService } from 'src/app/services/moment.service';
-import { environment } from 'src/environments/environment';
+
+import { environment } from '../../../../environments/environment';
+import { Moment } from '../../../Moment';
+import { MomentService } from '../../../services/moment.service';
 
 @Component({
   selector: 'app-home',
@@ -13,9 +14,9 @@ import { environment } from 'src/environments/environment';
 export class HomeComponent implements OnInit, OnDestroy {
   allMoments: Moment[] = [];
   moments: Moment[] = [];
-  baseApiUrl = environment.baseApiUrl;
+  baseApiUrl: string = environment.baseApiUrl;
 
-  faSearch = faSearch;
+  faSearch: IconDefinition = faSearch;
   searchTerm: string = '';
 
   private _subscriptions: Subscription[] = [];
@@ -23,7 +24,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(private momentService: MomentService) {}
 
   ngOnInit(): void {
-    const getMomentsObservable = this.momentService
+    const getMomentsSubscription = this.momentService
       .getMoments()
       .subscribe((moments) => {
         const data = moments;
@@ -39,7 +40,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.moments = momentsWithMappedData;
       });
 
-    this._subscriptions.push(getMomentsObservable);
+    this._subscriptions.push(getMomentsSubscription);
   }
 
   ngOnDestroy(): void {

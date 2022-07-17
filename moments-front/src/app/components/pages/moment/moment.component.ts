@@ -1,19 +1,25 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
+  AbstractControl,
   FormControl,
   FormGroup,
   FormGroupDirective,
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { faEdit, faTimes } from '@fortawesome/free-solid-svg-icons';
+import {
+  faEdit,
+  faTimes,
+  IconDefinition,
+} from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from 'rxjs';
-import { Comment } from 'src/app/Comment';
-import { Moment } from 'src/app/Moment';
-import { CommentService } from 'src/app/services/comment.service';
-import { MessagesService } from 'src/app/services/messages.service';
-import { MomentService } from 'src/app/services/moment.service';
-import { environment } from 'src/environments/environment';
+
+import { environment } from '../../../../environments/environment';
+import { Comment } from '../../../Comment';
+import { Moment } from '../../../Moment';
+import { CommentService } from '../../../services/comment.service';
+import { MessagesService } from '../../../services/messages.service';
+import { MomentService } from '../../../services/moment.service';
 
 @Component({
   selector: 'app-moment',
@@ -22,10 +28,10 @@ import { environment } from 'src/environments/environment';
 })
 export class MomentComponent implements OnInit, OnDestroy {
   moment?: Moment;
-  baseApiUrl = environment.baseApiUrl;
+  baseApiUrl: string = environment.baseApiUrl;
 
-  faTimes = faTimes;
-  faEdit = faEdit;
+  faTimes: IconDefinition = faTimes;
+  faEdit: IconDefinition = faEdit;
 
   commentForm!: FormGroup;
 
@@ -42,13 +48,13 @@ export class MomentComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
-    const getMomentObservable = this.momentService
+    const getMomentSubscription = this.momentService
       .getMoment(id)
       .subscribe((moment) => {
         this.moment = moment;
       });
 
-    this._subscriptions.push(getMomentObservable);
+    this._subscriptions.push(getMomentSubscription);
 
     this.commentForm = new FormGroup({
       text: new FormControl('', [Validators.required]),
@@ -60,23 +66,27 @@ export class MomentComponent implements OnInit, OnDestroy {
     this._subscriptions.forEach((subscription) => subscription.unsubscribe());
   }
 
-  get text() {
+  get text(): AbstractControl {
     return this.commentForm.get('text')!;
   }
 
-  get username() {
+  get username(): AbstractControl {
     return this.commentForm.get('username')!;
   }
 
-  removeHandler(id: number) {
-    this.momentService.removeMoment(id).subscribe();
+  removeHandler(id: number): void {
+    const removeMomentSubscription = this.momentService
+      .removeMoment(id)
+      .subscribe();
+
+    this._subscriptions.push(removeMomentSubscription);
 
     this.messagesService.add('Moment has been deleted successfully');
 
     this.router.navigate(['/']);
   }
 
-  onSubmit(formDirective: FormGroupDirective) {
+  onSubmit(formDirective: FormGroupDirective): void {
     if (this.commentForm.invalid) {
       return;
     }
@@ -85,18 +95,18 @@ export class MomentComponent implements OnInit, OnDestroy {
 
     comment.momentId = Number(this.moment!.id);
 
-    const createCommentObservable = this.commentService
+    const createCommentSubscription = this.commentService
       .createComment(comment)
       .subscribe((comment) => this.moment!.comments!.push(comment));
 
-    this._subscriptions.push(createCommentObservable);
+    this._subscriptions.push(createCommentSubscription);
 
     this.messagesService.add('Comment added!');
 
     this._resetForm(formDirective);
   }
 
-  private _resetForm(formDirective: FormGroupDirective) {
+  private _resetForm(formDirective: FormGroupDirective): void {
     this.commentForm.reset();
 
     formDirective.resetForm();

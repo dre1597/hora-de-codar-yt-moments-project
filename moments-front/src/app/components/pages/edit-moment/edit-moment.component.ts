@@ -1,9 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { Moment } from 'src/app/Moment';
-import { MessagesService } from 'src/app/services/messages.service';
-import { MomentService } from 'src/app/services/moment.service';
+
+import { Moment } from '../../../Moment';
+import { MessagesService } from '../../../services/messages.service';
+import { MomentService } from '../../../services/moment.service';
 
 @Component({
   selector: 'app-edit-moment',
@@ -26,20 +27,20 @@ export class EditMomentComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
-    const getMomentObservable = this.momentService
+    const getMomentSubscription = this.momentService
       .getMoment(id)
       .subscribe((moment) => {
         this.moment = moment;
       });
 
-    this._subscriptions.push(getMomentObservable);
+    this._subscriptions.push(getMomentSubscription);
   }
 
   ngOnDestroy(): void {
     this._subscriptions.forEach((subscription) => subscription.unsubscribe());
   }
 
-  editHandler(momentData: Moment) {
+  editHandler(momentData: Moment): void {
     const id = this.moment.id;
 
     const formData = new FormData();
@@ -51,11 +52,11 @@ export class EditMomentComponent implements OnInit, OnDestroy {
       formData.append('image', momentData.image);
     }
 
-    const updateMomentObservable = this.momentService
+    const updateMomentSubscription = this.momentService
       .updateMoment(id!, formData)
       .subscribe();
 
-    this._subscriptions.push(updateMomentObservable);
+    this._subscriptions.push(updateMomentSubscription);
 
     this.messagesService.add('Moment was added successfully!');
 
