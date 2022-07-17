@@ -24,7 +24,7 @@ export class MomentRepository extends Repository<Moment> {
     id: number,
     updateMomentDto: UpdateMomentDto,
     image: Express.Multer.File,
-  ) {
+  ): Promise<Moment> {
     const moment = await this.findOne(id);
 
     moment.title = updateMomentDto.title;
