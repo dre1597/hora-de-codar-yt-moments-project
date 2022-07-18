@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { faSearch, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
@@ -21,9 +22,13 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private _subscriptions: Subscription[] = [];
 
-  constructor(private momentService: MomentService) {}
+  constructor(
+    private momentService: MomentService,
+    private spinner: NgxSpinnerService
+  ) {}
 
   ngOnInit(): void {
+    this.spinner.show();
     const getMomentsSubscription = this.momentService
       .getMoments()
       .subscribe((moments) => {
@@ -38,6 +43,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
         this.allMoments = momentsWithMappedData;
         this.moments = momentsWithMappedData;
+        this.spinner.hide();
       });
 
     this._subscriptions.push(getMomentsSubscription);

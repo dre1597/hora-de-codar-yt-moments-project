@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
 
 import { Moment } from '../../../Moment';
@@ -19,7 +20,8 @@ export class NewMomentComponent implements OnDestroy {
   constructor(
     private momentService: MomentService,
     private messagesService: MessagesService,
-    private router: Router
+    private router: Router,
+    private spinner: NgxSpinnerService
   ) {}
 
   ngOnDestroy(): void {
@@ -27,6 +29,7 @@ export class NewMomentComponent implements OnDestroy {
   }
 
   createHandler(moment: Moment): void {
+    this.spinner.show();
     const formData = new FormData();
 
     formData.append('title', moment.title);
@@ -38,7 +41,9 @@ export class NewMomentComponent implements OnDestroy {
 
     const createMomentSubscription = this.momentService
       .createMoment(formData)
-      .subscribe();
+      .subscribe(() => {
+        this.spinner.hide();
+      });
 
     this._subscriptions.push(createMomentSubscription);
 

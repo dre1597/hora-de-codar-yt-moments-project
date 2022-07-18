@@ -12,6 +12,7 @@ import {
   faTimes,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
@@ -42,16 +43,19 @@ export class MomentComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private messagesService: MessagesService,
     private router: Router,
-    private commentService: CommentService
+    private commentService: CommentService,
+    private spinner: NgxSpinnerService
   ) {}
 
   ngOnInit(): void {
+    this.spinner.show();
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
     const getMomentSubscription = this.momentService
       .getMoment(id)
       .subscribe((moment) => {
         this.moment = moment;
+        this.spinner.hide();
       });
 
     this._subscriptions.push(getMomentSubscription);
@@ -75,9 +79,12 @@ export class MomentComponent implements OnInit, OnDestroy {
   }
 
   removeHandler(id: number): void {
+    this.spinner.show();
     const removeMomentSubscription = this.momentService
       .removeMoment(id)
-      .subscribe();
+      .subscribe(() => {
+        this.spinner.hide();
+      });
 
     this._subscriptions.push(removeMomentSubscription);
 
@@ -87,7 +94,9 @@ export class MomentComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(formDirective: FormGroupDirective): void {
+    this.spinner.show();
     if (this.commentForm.invalid) {
+      this.spinner.hide();
       return;
     }
 
@@ -97,7 +106,10 @@ export class MomentComponent implements OnInit, OnDestroy {
 
     const createCommentSubscription = this.commentService
       .createComment(comment)
-      .subscribe((comment) => this.moment!.comments!.push(comment));
+      .subscribe((comment) => {
+        this.moment!.comments!.push(comment);
+        this.spinner.hide();
+      });
 
     this._subscriptions.push(createCommentSubscription);
 

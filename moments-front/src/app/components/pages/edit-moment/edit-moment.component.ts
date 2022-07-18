@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
 
 import { Moment } from '../../../Moment';
@@ -21,16 +22,19 @@ export class EditMomentComponent implements OnInit, OnDestroy {
     private momentService: MomentService,
     private route: ActivatedRoute,
     private messagesService: MessagesService,
-    private router: Router
+    private router: Router,
+    private spinner: NgxSpinnerService
   ) {}
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.spinner.show();
 
     const getMomentSubscription = this.momentService
       .getMoment(id)
       .subscribe((moment) => {
         this.moment = moment;
+        this.spinner.hide();
       });
 
     this._subscriptions.push(getMomentSubscription);
@@ -41,6 +45,7 @@ export class EditMomentComponent implements OnInit, OnDestroy {
   }
 
   editHandler(momentData: Moment): void {
+    this.spinner.show();
     const id = this.moment.id;
 
     const formData = new FormData();
@@ -51,10 +56,11 @@ export class EditMomentComponent implements OnInit, OnDestroy {
     if (momentData.image) {
       formData.append('image', momentData.image);
     }
-
     const updateMomentSubscription = this.momentService
       .updateMoment(id!, formData)
-      .subscribe();
+      .subscribe(() => {
+        this.spinner.hide();
+      });
 
     this._subscriptions.push(updateMomentSubscription);
 
