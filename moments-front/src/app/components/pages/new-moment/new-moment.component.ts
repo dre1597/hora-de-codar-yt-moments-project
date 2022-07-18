@@ -13,6 +13,7 @@ import { MomentService } from '../../../services/moment.service';
 })
 export class NewMomentComponent implements OnDestroy {
   btnText: string = 'Share';
+  loading: boolean = false;
 
   private _subscriptions: Subscription[] = [];
 
@@ -27,6 +28,7 @@ export class NewMomentComponent implements OnDestroy {
   }
 
   createHandler(moment: Moment): void {
+    this.loading = true;
     const formData = new FormData();
 
     formData.append('title', moment.title);
@@ -38,7 +40,9 @@ export class NewMomentComponent implements OnDestroy {
 
     const createMomentSubscription = this.momentService
       .createMoment(formData)
-      .subscribe();
+      .subscribe(() => {
+        this.loading = false;
+      });
 
     this._subscriptions.push(createMomentSubscription);
 

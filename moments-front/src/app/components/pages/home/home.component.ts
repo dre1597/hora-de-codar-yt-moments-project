@@ -15,6 +15,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   allMoments: Moment[] = [];
   moments: Moment[] = [];
   baseApiUrl: string = environment.baseApiUrl;
+  loading: boolean = false;
 
   faSearch: IconDefinition = faSearch;
   searchTerm: string = '';
@@ -24,6 +25,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(private momentService: MomentService) {}
 
   ngOnInit(): void {
+    this.loading = true;
     const getMomentsSubscription = this.momentService
       .getMoments()
       .subscribe((moments) => {
@@ -38,6 +40,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
         this.allMoments = momentsWithMappedData;
         this.moments = momentsWithMappedData;
+        this.loading = false;
       });
 
     this._subscriptions.push(getMomentsSubscription);

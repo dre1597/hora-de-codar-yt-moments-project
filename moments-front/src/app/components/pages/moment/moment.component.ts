@@ -35,6 +35,8 @@ export class MomentComponent implements OnInit, OnDestroy {
 
   commentForm!: FormGroup;
 
+  loading: boolean = false;
+
   private _subscriptions: Subscription[] = [];
 
   constructor(
@@ -46,12 +48,14 @@ export class MomentComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.loading = true;
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
     const getMomentSubscription = this.momentService
       .getMoment(id)
       .subscribe((moment) => {
         this.moment = moment;
+        this.loading = false;
       });
 
     this._subscriptions.push(getMomentSubscription);
@@ -75,9 +79,12 @@ export class MomentComponent implements OnInit, OnDestroy {
   }
 
   removeHandler(id: number): void {
+    this.loading = true;
     const removeMomentSubscription = this.momentService
       .removeMoment(id)
-      .subscribe();
+      .subscribe(() => {
+        this.loading = false;
+      });
 
     this._subscriptions.push(removeMomentSubscription);
 
@@ -87,6 +94,7 @@ export class MomentComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(formDirective: FormGroupDirective): void {
+    this.loading = true;
     if (this.commentForm.invalid) {
       return;
     }
@@ -97,7 +105,10 @@ export class MomentComponent implements OnInit, OnDestroy {
 
     const createCommentSubscription = this.commentService
       .createComment(comment)
-      .subscribe((comment) => this.moment!.comments!.push(comment));
+      .subscribe((comment) => {
+        this.moment!.comments!.push(comment);
+        this.loading = false;
+      });
 
     this._subscriptions.push(createCommentSubscription);
 

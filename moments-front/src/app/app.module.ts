@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { NgxLoadingModule } from 'ngx-loading';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -36,6 +37,7 @@ import { NewMomentComponent } from './components/pages/new-moment/new-moment.com
     FormsModule,
     ReactiveFormsModule,
     FontAwesomeModule,
+    NgxLoadingModule.forRoot({}),
   ],
   providers: [],
   bootstrap: [AppComponent],

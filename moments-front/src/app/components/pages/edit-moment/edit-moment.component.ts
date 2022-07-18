@@ -14,6 +14,7 @@ import { MomentService } from '../../../services/moment.service';
 export class EditMomentComponent implements OnInit, OnDestroy {
   moment!: Moment;
   btnText: string = 'Edit';
+  loading: boolean = false;
 
   private _subscriptions: Subscription[] = [];
 
@@ -25,12 +26,14 @@ export class EditMomentComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.loading = true;
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
     const getMomentSubscription = this.momentService
       .getMoment(id)
       .subscribe((moment) => {
         this.moment = moment;
+        this.loading = false;
       });
 
     this._subscriptions.push(getMomentSubscription);
@@ -41,6 +44,7 @@ export class EditMomentComponent implements OnInit, OnDestroy {
   }
 
   editHandler(momentData: Moment): void {
+    this.loading = true;
     const id = this.moment.id;
 
     const formData = new FormData();
@@ -54,7 +58,9 @@ export class EditMomentComponent implements OnInit, OnDestroy {
 
     const updateMomentSubscription = this.momentService
       .updateMoment(id!, formData)
-      .subscribe();
+      .subscribe(() => {
+        this.loading = false;
+      });
 
     this._subscriptions.push(updateMomentSubscription);
 
