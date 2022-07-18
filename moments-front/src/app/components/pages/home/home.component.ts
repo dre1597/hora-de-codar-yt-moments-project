@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { faSearch, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subscription } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
@@ -21,9 +22,13 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private _subscriptions: Subscription[] = [];
 
-  constructor(private momentService: MomentService) {}
+  constructor(
+    private momentService: MomentService,
+    private ngxLoader: NgxUiLoaderService
+  ) {}
 
   ngOnInit(): void {
+    this.ngxLoader.start();
     const getMomentsSubscription = this.momentService
       .getMoments()
       .subscribe((moments) => {
@@ -38,6 +43,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
         this.allMoments = momentsWithMappedData;
         this.moments = momentsWithMappedData;
+        this.ngxLoader.stop();
       });
 
     this._subscriptions.push(getMomentsSubscription);

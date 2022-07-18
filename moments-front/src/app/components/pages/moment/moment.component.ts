@@ -13,6 +13,7 @@ import {
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from 'rxjs';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 import { environment } from '../../../../environments/environment';
 import { Comment } from '../../../Comment';
@@ -42,16 +43,19 @@ export class MomentComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private messagesService: MessagesService,
     private router: Router,
-    private commentService: CommentService
+    private commentService: CommentService,
+    private ngxLoader: NgxUiLoaderService
   ) {}
 
   ngOnInit(): void {
+    this.ngxLoader.start();
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
     const getMomentSubscription = this.momentService
       .getMoment(id)
       .subscribe((moment) => {
         this.moment = moment;
+        this.ngxLoader.stop();
       });
 
     this._subscriptions.push(getMomentSubscription);
